@@ -8,12 +8,20 @@ IP="51.83.58.3"
 USER="lucxf"
 ZONE_FILE="/etc/bind/$DOMAIN"
 
+delete_binds() {
+    rm -r $ZONE_FILE
+    apt purge -y bind9 bind9utils bind9-doc
+}
+
 # Función para escribir errores en el log y mostrar el mensaje en rojo
 log_error() {
     # Registrar el error en el archivo de log
     echo "$(date) - ERROR: $1" | tee -a $LOGFILE
     # Mostrar el error en la terminal en rojo
     echo -e "\033[31m$(date) - ERROR: $1\033[0m"
+
+    delete_binds
+
     # Detener la ejecución del script
     exit 1
 }

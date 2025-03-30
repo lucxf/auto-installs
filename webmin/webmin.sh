@@ -3,12 +3,43 @@
 # Archivo de log
 LOGFILE="/var/log/Project/webmin_installation.log"
 
+delete_webmin() {
+    
+    # Detener el servicio de Webmin
+    sudo systemctl stop webmin
+
+    # Desinstalar Webmin
+    sudo apt remove --purge -y webmin
+
+    # Eliminar el repositorio de Webmin
+    sudo add-apt-repository --remove "deb [arch=amd64] http://download.webmin.com/download/repository sarge contrib"
+
+    # Eliminar la clave GPG de Webmin
+    sudo apt-key del JCameron
+
+    # Limpiar cualquier paquete obsoleto y dependencias innecesarias
+    sudo apt autoremove -y
+    sudo apt autoclean
+
+    # Opcional: cerrar el puerto de Webmin en el firewall
+    sudo ufw deny 10000/tcp
+
+    # Verificar el estado del firewall
+    sudo ufw status
+
+    echo "Webmin ha sido desinstalado correctamente."
+
+}
+
 # Función para escribir errores en el log y mostrar el mensaje en rojo
 log_error() {
     # Registrar el error en el archivo de log
     echo "$(date) - ERROR: $1" | tee -a $LOGFILE
     # Mostrar el error en la terminal en rojo
     echo -e "\033[31m$(date) - ERROR: $1\033[0m"
+
+    delete_webmin
+
     # Detener la ejecución del script
     exit 1
 }

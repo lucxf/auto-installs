@@ -3,12 +3,38 @@
 # Archivo de log
 LOGFILE="/var/log/Project/docker_installation.log"
 
+delete_docker() {
+    # Detener el servicio de Docker
+    sudo systemctl stop docker
+
+    # Eliminar Docker y sus componentes
+    sudo apt-get purge -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+
+    # Limpiar archivos de configuración y datos
+    sudo rm -rf /var/lib/docker
+    sudo rm -rf /var/lib/containerd
+    sudo rm -rf /etc/docker
+    sudo rm -rf /etc/apt/sources.list.d/docker.list
+    sudo rm -rf /etc/apt/keyrings/docker.asc
+
+    # Limpiar el sistema de paquetes obsoletos y dependencias
+    sudo apt-get autoremove -y
+    sudo apt-get autoclean
+
+    # Actualizar la lista de paquetes
+    sudo apt-get update -y
+
+    echo "Docker y sus componentes han sido eliminados correctamente."
+
+}
+
 # Función para escribir errores en el log y mostrar el mensaje en rojo
 log_error() {
     # Registrar el error en el archivo de log
     echo "$(date) - ERROR: $1" | tee -a $LOGFILE
     # Mostrar el error en la terminal en rojo
     echo -e "\033[31m$(date) - ERROR: $1\033[0m"
+    delete_docker
     # Detener la ejecución del script
     exit 1
 }
