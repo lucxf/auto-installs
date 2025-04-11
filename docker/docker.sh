@@ -9,6 +9,9 @@ log_error() {
     echo "$(date) - ERROR: $1" | tee -a $LOGFILE
     # Mostrar el error en la terminal en rojo
     echo -e "\033[31m$(date) - ERROR: $1\033[0m"
+    # Eliminar la instalación para evitar conflictos
+    chmod +x ./BORRAR/borrar_docker.sh
+    ./BORRAR/borrar_docker.sh
     # Detener la ejecución del script
     exit 1
 }

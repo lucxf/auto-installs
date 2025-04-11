@@ -3,9 +3,12 @@
 # Archivo de log
 LOGFILE="/var/log/Project/bind_installation.log"
 # Zona DNS
-DOMAIN="millionx.sdslab.cat"
-IP="51.83.58.3"
-USER="lucxf"
+DOMAIN=$1
+NS1=$2
+NS2=$3
+NS3=$4
+IP=$5
+USER=$6
 ZONE_FILE="/etc/bind/$DOMAIN"
 
 # Función para escribir errores en el log y mostrar el mensaje en rojo
@@ -53,13 +56,19 @@ $DOMAIN. IN SOA ns1.$DOMAIN. $USER.$DOMAIN. (
 
 ; Servidores DNS
 $DOMAIN. IN NS ns1.$DOMAIN.
+$DOMAIN. IN NS ns2.$DOMAIN.
+$DOMAIN. IN NS ns3.$DOMAIN.
 $DOMAIN. IN A $IP
 ; Direcciones IP
-ns1.$DOMAIN. IN A $IP
+ns1.$DOMAIN. IN A $NS1
+ns2.$DOMAIN. IN A $NS2
+ns3.$DOMAIN. IN A $NS3
 www.$DOMAIN. IN A $IP
-kuma.$DOMAIN. IN A $IP
-traefik.$DOMAIN. IN A $IP
+moodle.$DOMAIN. IN A $IP
+zabbix.$DOMAIN. IN A $IP
+grafana.$DOMAIN. IN A $IP
 nextcloud.$DOMAIN. IN A $IP
+webmin-dns.$DOMAIN. IN A $IP
 EOF
 
 if [ $? -ne 0 ]; then
