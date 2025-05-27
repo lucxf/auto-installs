@@ -1,17 +1,11 @@
 #!/bin/bash
 
-# Archivo de log
-LOGFILE="/var/log/Project/bind_installation.log"
-# Zona DNS
 DOMAIN=$1
-NS1=$2
-NS2=$3
-NS3=$4
-IP=$5
-USER=$6
+USER=$2
 ZONE_FILE="/etc/bind/$DOMAIN"
 
-# Función para escribir errores en el log y mostrar el mensaje en rojo
+# Configuración de la zona DNS
+
 log_error() {
     # Registrar el error en el archivo de log
     echo "$(date) - ERROR: $1" | tee -a $LOGFILE
@@ -21,58 +15,22 @@ log_error() {
     exit 1
 }
 
-# Crear el directorio de logs si no existe
-mkdir -p /var/log/Project
-
-# Comenzamos la instalación de BIND DNS
-echo -e "\033[34mInstalando BIND DNS...\033[0m"
-if ! sudo apt update -y && sudo apt upgrade -y; then
-    log_error "Error al ejecutar 'apt update' o 'apt upgrade'."
-fi
-
-if ! sudo apt install -y bind9 bind9utils bind9-doc; then
-    log_error "Error al instalar BIND DNS (bind9)."
-fi
-
-# Configuración de la zona DNS
-
 # Creamos el archivo de zona para '$DOMAIN'
-echo -e "\033[34mCreando el archivo de zona DNS para $DOMAIN...\033[0m"
+echo -e "\033[34mCreando el archivo de zona DNS\033[0m"
 
 # Comprobamos si ya existe el archivo de zona
 if [ -f $ZONE_FILE ]; then
     log_error "El archivo de zona '$ZONE_FILE' ya existe. Por favor, elimina el archivo o revisa permisos."
 fi
 
-cat << EOF | sudo tee $ZONE_FILE > /dev/null
-\$TTL 38400  ; Tiempo (seg) de vida por defecto (TTL)
-$DOMAIN. IN SOA ns1.$DOMAIN. $USER.$DOMAIN. (
-    2023110701 ; Serial
-    10800      ; Refresh
-    3600       ; Retry
-    604800     ; Expire
-    38400      ; Minimum TTL
-)
+# Mejora, que cree a partir de un excel
 
-; Servidores DNS
-$DOMAIN. IN NS ns1.$DOMAIN.
-$DOMAIN. IN NS ns2.$DOMAIN.
-$DOMAIN. IN NS ns3.$DOMAIN.
-$DOMAIN. IN A $IP
-; Direcciones IP
-ns1.$DOMAIN. IN A $NS1
-ns2.$DOMAIN. IN A $NS2
-ns3.$DOMAIN. IN A $NS3
-www.$DOMAIN. IN A $IP
-moodle.$DOMAIN. IN A $IP
-zabbix.$DOMAIN. IN A $IP
-grafana.$DOMAIN. IN A $IP
-nextcloud.$DOMAIN. IN A $IP
-webmin-dns.$DOMAIN. IN A $IP
-EOF
+if ! python3 ./tools/DNS/bind_DNS/create_zone_file.py $DOMAIN $USER; then
+    log_error "Error crear archivo de zona con python"
+fi
 
 if [ $? -ne 0 ]; then
-    log_error "Error al crear el archivo de zona '$ZONE_FILE'."
+    log_error "Error al crear el archivo de zona "
 fi
 
 # Configuración de BIND para que reconozca la nueva zona
@@ -156,7 +114,7 @@ if ! sudo ufw status; then
     log_error "Error al verificar el estado del firewall."
 fi
 
-echo -e "\033[32mInstalación y configuración de BIND DNS completada con éxito.\033[0m"
+systemctl restart webmin
 
-# Fin del script
-exit 0
+# Mensaje de éxito en verde
+echo -e "\033[32mZona DNS creada correctamente.\033[0m"
