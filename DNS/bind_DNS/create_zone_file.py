@@ -13,7 +13,7 @@ class ReadExcel():
         self.excel_path = excel_path
 
     def read_lines(self):
-        registry_file = open('./tools/DNS/registry.csv', 'r')
+        registry_file = open('./DNS/registry.csv', 'r')
         file_lines = registry_file.readlines()
 
         return file_lines
