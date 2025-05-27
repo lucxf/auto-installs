@@ -46,12 +46,12 @@ else
     echo "❌ Webmin NO está instalado en el sistema."
     # Empezamos la instalación de Webmin
     log_info "Instalando Webmin..."
-    chmod +x ./webmin/webmin_install.sh
-    if ! sudo ./webmin/webmin_install.sh; then
+    chmod +x ./webmin/webmin.sh
+    if ! sudo ./webmin/webmin.sh; then
         log_error "Error al instalar Webmin."
         log_info "Borrando todo lo instalado..."
-        chmod +x ./webmin/uninstall_webmin/uninstall_webmin.sh
-        sudo ./webmin/uninstall_webmin/uninstall_webmin.sh
+        #chmod +x ./webmin/uninstall_webmin/uninstall_webmin.sh
+        #sudo ./webmin/uninstall_webmin/uninstall_webmin.sh
     fi
 fi
 
