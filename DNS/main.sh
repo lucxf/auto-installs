@@ -50,15 +50,15 @@ else
     if ! sudo ./tools/webmin/webmin_install.sh; then
         log_error "Error al instalar Webmin."
         log_info "Borrando todo lo instalado..."
-        chmod +x ./tools/webmin/uninstall_webmin/uninstall_webmin.sh
-        sudo ./tools/webmin/uninstall_webmin/uninstall_webmin.sh
+        chmod +x ./webmin/uninstall_webmin/uninstall_webmin.sh
+        sudo ./webmin/uninstall_webmin/uninstall_webmin.sh
     fi
 fi
 
 # Creamos la zona de DNS
 log_info "Instalando bind DNS..."
-chmod +x ./tools/DNS/bind_DNS/bind_dns_install.sh
-if ! sudo ./tools/DNS/bind_DNS/bind_dns_install.sh; then
+chmod +x ./DNS/bind_DNS/bind_dns_install.sh
+if ! sudo ./DNS/bind_DNS/bind_dns_install.sh; then
     rm -r $BIND_FOLDER_PATH
     rm -r /var/cache/bind/
     apt purge bind9 bind9utils bind9-doc -y
@@ -66,8 +66,8 @@ if ! sudo ./tools/DNS/bind_DNS/bind_dns_install.sh; then
 fi
 
 log_info "Creando la zona de DNS..."
-chmod +x ./tools/DNS/bind_DNS/create_dns_master_zone.sh
-if ! sudo ./tools/DNS/bind_DNS/create_dns_master_zone.sh $DOMAIN $USER; then
+chmod +x ./DNS/bind_DNS/create_dns_master_zone.sh
+if ! sudo ./DNS/bind_DNS/create_dns_master_zone.sh $DOMAIN $USER; then
     rm -r $BIND_FOLDER_PATH
     rm -r /var/cache/bind/
     apt purge bind9 bind9utils bind9-doc -y
