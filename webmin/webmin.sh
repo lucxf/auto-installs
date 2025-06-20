@@ -29,5 +29,8 @@ sudo dpkg -i webmin_latest.deb || sudo apt -f install -y
 echo -e "${CYAN}Limpiando archivos temporales...${NC}"
 rm -f webmin_latest.deb
 
+# Obtener IP local principal
+IP=$(hostname -I | awk '{print $1}')
+
 echo -e "${GREEN}Webmin instalado correctamente.${NC}"
-echo -e "${YELLOW}Accede en: ${CYAN}https://<tu-ip>:10000${NC}"
+echo -e "${YELLOW}Accede en: ${CYAN}https://$IP:10000${NC}"
